@@ -85,7 +85,7 @@ class CustomRenderer(private val context: Context) : GLSurfaceView.Renderer {
     companion object {
         private const val eyeZ = -1f
         const val MAX_SPRITE = 13 * 4
-        var fovy = 120f
+        private const val fovy = 60f
         private val MAXCOORY = Math.tan((fovy / 2) * Math.PI / 180).toFloat()
         private val MAXCOORX = MAXCOORY * 9 / 16f
         private val COORX = 175 / 256f * MAXCOORX
@@ -101,6 +101,8 @@ class CustomRenderer(private val context: Context) : GLSurfaceView.Renderer {
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         glViewport(0, 0, width, height)
+        val aspect: Float = width.toFloat() / height.toFloat()
+        Matrix.perspectiveM(projectionMatrix, 0, fovy, aspect, 1f, 100f)
     }
 
     override fun onDrawFrame(gl: GL10?) {
