@@ -13,13 +13,13 @@ class ImageGL : GLObject() {
     private val indicesData = shortArrayOf(0, 1, 2, 0, 2, 3)
 
     private var verticesData = floatArrayOf(
-        -1f, 1f, 0.0f, // Position 0
+        -9/16f, 1f, 0.0f, // Position 0
         0.0f, 0.0f, // TexCoord 0
-        -1f, -1f, 0.0f, // Position 1
+        -9/16f, -1f, 0.0f, // Position 1
         0.0f, 1.0f, // TexCoord 1
-        1f, -1f, 0.0f, // Position 2
+        9/16f, -1f, 0.0f, // Position 2
         1.0f, 1.0f, // TexCoord 2
-        1f, 1f, 0.0f, // Position 3
+        9/16f, 1f, 0.0f, // Position 3
         1.0f, 0.0f // TexCoord 3
     )
     private var vertexArray: VertexArray
