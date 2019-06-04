@@ -12,14 +12,15 @@ import java.nio.ShortBuffer
 class ImageGL : GLObject() {
     private val indicesData = shortArrayOf(0, 1, 2, 0, 2, 3)
 
+    // fixed coordinator
     private var verticesData = floatArrayOf(
-        -1f, 1f, 0.0f, // Position 0
+        9 / 16f, 1f, 0.0f, // Position 0
         0.0f, 0.0f, // TexCoord 0
-        -1f, -1f, 0.0f, // Position 1
+        9 / 16f, -1f, 0.0f, // Position 1
         0.0f, 1.0f, // TexCoord 1
-        1f, -1f, 0.0f, // Position 2
+        -9 / 16f, -1f, 0.0f, // Position 2
         1.0f, 1.0f, // TexCoord 2
-        1f, 1f, 0.0f, // Position 3
+        -9 / 16f, 1f, 0.0f, // Position 3
         1.0f, 0.0f // TexCoord 3
     )
     private var vertexArray: VertexArray
@@ -47,7 +48,7 @@ class ImageGL : GLObject() {
             POSITION_COMPONENT_COUNT,
             STRIDE
         )
-        currentOffset+= POSITION_COMPONENT_COUNT
+        currentOffset += POSITION_COMPONENT_COUNT
 
         vertexArray.setVertexAttribPointer(
             currentOffset,
@@ -58,10 +59,10 @@ class ImageGL : GLObject() {
     }
 
     companion object {
-        val POSITION_COMPONENT_COUNT = 3
-        val TEXCOORD_COMPONENT_COUNT = 2
-        val TOTAL_COMPONENT_COUNT = POSITION_COMPONENT_COUNT +
+        const val POSITION_COMPONENT_COUNT = 3
+        const val TEXCOORD_COMPONENT_COUNT = 2
+        private const val TOTAL_COMPONENT_COUNT = POSITION_COMPONENT_COUNT +
                 TEXCOORD_COMPONENT_COUNT
-         val STRIDE = TOTAL_COMPONENT_COUNT * Constants.BYTES_PER_FLOAT
+        val STRIDE = TOTAL_COMPONENT_COUNT * Constants.BYTES_PER_FLOAT
     }
 }
