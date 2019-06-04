@@ -12,7 +12,7 @@ import com.loanxu.photoeditor.utils.Utils
 import kotlin.random.Random
 
 class FireFlySystem(maxFirefly: Int) : GLObject() {
-    private var maxFireFly = 100
+    private var maxFireFly = 10
     private var currentFireFly = 0
     private var nextFireFly = 0
     private var vertexData: FloatArray

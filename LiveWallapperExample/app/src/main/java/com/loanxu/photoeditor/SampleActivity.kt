@@ -10,9 +10,9 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.WindowManager
 import com.loanxu.photoeditor.objs.ImageGL
 import com.loanxu.photoeditor.programs.ImageProgram
-import com.loanxu.photoeditor.renders.GLRender
 import com.loanxu.photoeditor.utils.TextureLoader
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -23,7 +23,10 @@ class SampleActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION or WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION or WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val configurationInfo =
             activityManager.deviceConfigurationInfo
@@ -47,7 +50,7 @@ class SampleActivity : AppCompatActivity() {
 
                 // assign our renderer
                 it.setEGLConfigChooser(8, 8, 8, 8, 16, 0)
-                it.setRenderer(CustomRenderer(this@SampleActivity))
+                it.setRenderer(BackgroundRenderer(this@SampleActivity))
 
                 it.holder.setFormat(PixelFormat.RGBA_8888)
                 it.holder.setFormat(PixelFormat.TRANSLUCENT)
@@ -76,7 +79,7 @@ class SampleActivity : AppCompatActivity() {
     }
 }
 
-class CustomRenderer(private val context: Context) : GLSurfaceView.Renderer {
+class BackgroundRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private var imageGL: ImageGL? = null
     private var imageProgram: ImageProgram? = null
     private var textureIdImage: Int = 0
@@ -84,18 +87,12 @@ class CustomRenderer(private val context: Context) : GLSurfaceView.Renderer {
 
     companion object {
         private const val eyeZ = -1f
-        const val MAX_SPRITE = 13 * 4
-        private const val fovy = 60f
-        private val MAXCOORY = Math.tan((fovy / 2) * Math.PI / 180).toFloat()
-        private val MAXCOORX = MAXCOORY * 9 / 16f
-        private val COORX = 175 / 256f * MAXCOORX
+        private const val fovy = 90f
         private val projectionMatrix = FloatArray(16)
         private val viewMatrix = FloatArray(16)
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
-//        glClearColor(0.5f, 0f, 0.2f, 1f)
-
         loadBackground()
     }
 
@@ -119,16 +116,12 @@ class CustomRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private fun loadBackground() {
         imageGL = ImageGL()
         imageProgram = ImageProgram(context, R.raw.vertex_image, R.raw.fragment_image)
-        textureIdImage = TextureLoader.loadTexture(context, R.drawable.bg)
+        textureIdImage = TextureLoader.loadTexture(context, R.drawable.background1)
     }
 
     private fun drawBackground() {
         val modelMatrix = FloatArray(16)
         Matrix.setIdentityM(modelMatrix, 0)
-        // Scale to some reasonable size and flip upright
-        val scaleX = -MAXCOORY * 16f / 9f
-        val scaleY = MAXCOORY
-        Matrix.scaleM(modelMatrix, 0, scaleX, scaleY, 0f)
         Matrix.translateM(
             modelMatrix,
             0,
@@ -165,6 +158,21 @@ class CustomRenderer(private val context: Context) : GLSurfaceView.Renderer {
             }
         }
 
+    }
+
+}
+
+class FireFlyRenderer(private val context: Context) : GLSurfaceView.Renderer {
+    override fun onDrawFrame(gl: GL10?) {
+        
+    }
+
+    override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
+        
+    }
+
+    override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
+        
     }
 
 }
