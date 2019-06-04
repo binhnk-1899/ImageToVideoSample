@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.WindowManager
 import com.loanxu.photoeditor.objs.ImageGL
 import com.loanxu.photoeditor.programs.ImageProgram
 import com.loanxu.photoeditor.renders.GLRender
@@ -24,10 +23,6 @@ class SampleActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION or WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION or WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
 
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val configurationInfo =
@@ -90,7 +85,7 @@ class CustomRenderer(private val context: Context) : GLSurfaceView.Renderer {
     companion object {
         private const val eyeZ = -1f
         const val MAX_SPRITE = 13 * 4
-        private const val fovy = 90f
+        private const val fovy = 60f
         private val MAXCOORY = Math.tan((fovy / 2) * Math.PI / 180).toFloat()
         private val MAXCOORX = MAXCOORY * 9 / 16f
         private val COORX = 175 / 256f * MAXCOORX
