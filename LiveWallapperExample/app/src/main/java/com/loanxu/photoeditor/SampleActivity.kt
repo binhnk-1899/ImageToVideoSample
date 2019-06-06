@@ -13,12 +13,13 @@ import android.util.Log
 import android.view.WindowManager
 import com.loanxu.photoeditor.objs.ImageGL
 import com.loanxu.photoeditor.programs.ImageProgram
+import com.loanxu.photoeditor.renders.GLRender
 import com.loanxu.photoeditor.utils.TextureLoader
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 class SampleActivity : AppCompatActivity() {
-    private var glSurfaceView: GLSurfaceView? = null
+    private var glSurfaceView: BgSurfaceView? = null
     private var rendererSet = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,18 +44,8 @@ class SampleActivity : AppCompatActivity() {
         Log.e("Ahihi", "GLES support: $supportsEs2")
 
         if (supportsEs2) {
-            glSurfaceView = GLSurfaceView(this@SampleActivity)
+            glSurfaceView = BgSurfaceView(this@SampleActivity, BackgroundRenderer(this@SampleActivity))
             glSurfaceView?.let {
-                // request an openGL ES 2.0 compatible context
-                it.setEGLContextClientVersion(2)
-
-                // assign our renderer
-                it.setEGLConfigChooser(8, 8, 8, 8, 16, 0)
-                it.setRenderer(BackgroundRenderer(this@SampleActivity))
-
-                it.holder.setFormat(PixelFormat.RGBA_8888)
-                it.holder.setFormat(PixelFormat.TRANSLUCENT)
-                it.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
 
                 rendererSet = true
                 setContentView(it)
@@ -116,7 +107,7 @@ class BackgroundRenderer(private val context: Context) : GLSurfaceView.Renderer 
     private fun loadBackground() {
         imageGL = ImageGL()
         imageProgram = ImageProgram(context, R.raw.vertex_image, R.raw.fragment_image)
-        textureIdImage = TextureLoader.loadTexture(context, R.drawable.background1)
+        textureIdImage = TextureLoader.loadTexture(context, R.drawable.background4)
     }
 
     private fun drawBackground() {
@@ -160,19 +151,29 @@ class BackgroundRenderer(private val context: Context) : GLSurfaceView.Renderer 
 
     }
 
+    fun handleTouchDrag(deltaX: Float, deltaY: Float) {
+        coordX -= deltaX * (GLRender.MAXCOORX / 1000f)
+        if (coordX < -GLRender.COORX) {
+            coordX = -GLRender.COORX
+        }
+        if (coordX > GLRender.COORX) {
+            coordX = GLRender.COORX
+        }
+    }
+
 }
 
 class FireFlyRenderer(private val context: Context) : GLSurfaceView.Renderer {
     override fun onDrawFrame(gl: GL10?) {
-        
+
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
-        
+
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
-        
+
     }
 
 }

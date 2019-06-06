@@ -14,13 +14,13 @@ class ImageGL : GLObject() {
 
     // fixed coordinator
     private var verticesData = floatArrayOf(
-        9 / 16f, 1f, 0.0f, // Position 0
+        16 / 9f, 1f, 0.0f, // Position 0
         0.0f, 0.0f, // TexCoord 0
-        9 / 16f, -1f, 0.0f, // Position 1
+        16 / 9f, -1f, 0.0f, // Position 1
         0.0f, 1.0f, // TexCoord 1
-        -9 / 16f, -1f, 0.0f, // Position 2
+        -16 / 9f, -1f, 0.0f, // Position 2
         1.0f, 1.0f, // TexCoord 2
-        -9 / 16f, 1f, 0.0f, // Position 3
+        -16 / 9f, 1f, 0.0f, // Position 3
         1.0f, 0.0f // TexCoord 3
     )
     private var vertexArray: VertexArray
@@ -39,7 +39,7 @@ class ImageGL : GLObject() {
     }
 
     override fun bindData(program: ShaderProgram) {
-        var p = program as ImageProgram
+        val p = program as ImageProgram
         var currentOffset = 0
 
         vertexArray.setVertexAttribPointer(
