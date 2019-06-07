@@ -45,7 +45,7 @@ vec3 dropVertical() {
 }
 
 vec3 getPos(){
-    return elip();
+    return dropVertical();
 }
 
 mat4 rotationX(in float angle) {
@@ -90,8 +90,8 @@ void main()
     v_Color = a_Color;
     vec4 currentPos = vec4(getPos(), 1.0);
     float phi = a_Phi;
-    // gl_Position= u_Matrix * a_Position;
-    gl_Position = u_Matrix * rotationX(phi) * rotationY(phi) * currentPos;
+     gl_Position= u_Matrix * a_Position;
+//    gl_Position = u_Matrix * rotationX(phi) * rotationY(phi) * currentPos;
     float s = (u_Time-a_Time)*a_size;
     gl_PointSize = sizePoint();
 
