@@ -2,6 +2,7 @@ package com.loanxu.photoeditor
 
 import android.app.ActivityManager
 import android.content.Context
+import android.graphics.Color
 import android.graphics.PixelFormat
 import android.opengl.GLES20.*
 import android.opengl.GLSurfaceView
@@ -11,9 +12,13 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.WindowManager
+import com.loanxu.photoeditor.objs.FireFlySystem
+import com.loanxu.photoeditor.objs.FireflyObj
 import com.loanxu.photoeditor.objs.ImageGL
+import com.loanxu.photoeditor.programs.FireFlyProgram
 import com.loanxu.photoeditor.programs.ImageProgram
 import com.loanxu.photoeditor.renders.GLRender
+import com.loanxu.photoeditor.utils.Geometry
 import com.loanxu.photoeditor.utils.TextureLoader
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -76,6 +81,20 @@ class BackgroundRenderer(private val context: Context) : GLSurfaceView.Renderer 
     private var textureIdImage: Int = 0
     private var coordX = 0f
 
+    // firefly object
+    private var fireFlyProgram: FireFlyProgram? = null
+    private var fireflyObj: FireflyObj? = null
+    private var fireFlySystem: FireFlySystem? = null
+    private var textureIdFireFly: Int = 0
+    private var timeStart: Long = 0
+    private var timeStartAdd: Long = 0
+    private var angle: Float = 0.0f
+    private var isIncrease = true
+    private var current = 0
+    private var max = 100
+    private var index = 0
+    private var scale = 2 * max / 100f
+
     companion object {
         private const val eyeZ = -1f
         private const val fovy = 90f
@@ -85,6 +104,7 @@ class BackgroundRenderer(private val context: Context) : GLSurfaceView.Renderer 
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         loadBackground()
+        loadFireFly()
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -102,6 +122,7 @@ class BackgroundRenderer(private val context: Context) : GLSurfaceView.Renderer 
             0f, 1.0f, 0.0f
         )
         drawBackground()
+        drawFireFlys()
     }
 
     private fun loadBackground() {
@@ -149,6 +170,66 @@ class BackgroundRenderer(private val context: Context) : GLSurfaceView.Renderer 
             }
         }
 
+    }
+
+    private fun loadFireFly() {
+        fireflyObj = FireflyObj(
+            Geometry.Vector(1f, 1f, 1.0f),
+            Color.rgb(225, 255, 255),
+            1f,
+            3f,
+            20f
+        )
+        fireFlyProgram = FireFlyProgram(context, R.raw.snow_vertex_shader, R.raw.firefly_fragment_shader)
+        fireFlySystem = FireFlySystem(max)
+        textureIdFireFly = TextureLoader.loadTexture(context, R.drawable.ic_snow)
+
+    }
+
+    private fun drawFireFlys() {
+        var time = (System.nanoTime() - timeStart) / 1000000000f
+
+        if (current < max) {
+            if (current % 100 == 0) {
+                timeStartAdd = System.nanoTime()
+            }
+
+            val timeAdd = (System.nanoTime() - timeStartAdd) / 1000000000f
+            fireflyObj?.addFirefly(fireFlySystem!!, timeAdd)
+            current++
+        }
+        angle += (Math.PI * 2).toFloat() / 600
+
+        index = (time / scale).toInt()
+        time -= index * scale
+        isIncrease = index % 2 == 0
+
+        time = if (!isIncrease) {
+            (scale - time) / (max / 100f)
+        } else {
+            time / (max / 100f)
+        }
+        val modelMatrix = FloatArray(16)
+        Matrix.setIdentityM(modelMatrix, 0)
+        Matrix.translateM(modelMatrix, 0, coordX * -2f, 0f, 0f)
+        val matrix = FloatArray(16)
+        Matrix.multiplyMM(matrix, 0, viewMatrix, 0, modelMatrix, 0)
+        Matrix.multiplyMM(matrix, 0, projectionMatrix, 0, matrix, 0)
+        // set blend point
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_ONE, GL_ONE)
+        //use program
+        fireFlyProgram?.useProgram()
+        fireFlyProgram?.setUniforms(
+            matrix,
+            angle,
+            time,
+            isIncrease,
+            textureIdFireFly
+        )
+        fireFlySystem?.bindData(fireFlyProgram!!)
+        fireFlySystem?.draw()
+        glDisable(GL_BLEND)
     }
 
     fun handleTouchDrag(deltaX: Float, deltaY: Float) {

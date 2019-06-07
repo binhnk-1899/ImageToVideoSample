@@ -47,7 +47,7 @@ class GLRender(private val context: Context) : GLSurfaceView.Renderer {
     private var current = 0
     private var max = 100
     private var index = 0
-    private var scale = 3 * max / 100f
+    private var scale = 2 * max / 100f
 
     override fun onDrawFrame(gl: GL10?) {
         glClear(GL_COLOR_BUFFER_BIT)
@@ -108,12 +108,11 @@ class GLRender(private val context: Context) : GLSurfaceView.Renderer {
             Color.rgb(225, 255, 255),
             1f,
             3f,
-            25f
+            20f
         )
         fireFlyProgram = FireFlyProgram(context, R.raw.firefly_vertex_shader, R.raw.firefly_fragment_shader)
         fireFlySystem = FireFlySystem(max)
-        textureIdFireFly = TextureLoader.loadTexture(context, R.drawable.firefly)
-
+        textureIdFireFly = TextureLoader.loadTexture(context, R.drawable.ic_snow)
 
     }
 
